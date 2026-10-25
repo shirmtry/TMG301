@@ -1,4 +1,4 @@
-# 📘 TMG301 — BÁO CÁO ĐỒ ÁN & HƯỚNG DẪN DEMO
+# 📘 TMG301 — BÁO CÁO DỰ ÁN & HƯỚNG DẪN DEMO
 ## Speech & Text Translation App · Việt ↔ Anh
 
 > **HUYTKING TECH DRONE · SHIRMTRY**  
