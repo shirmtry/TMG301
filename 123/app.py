@@ -5,7 +5,7 @@ import re
 import time
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-from pydub import AudioSegment
+from pydub import AudioTMG301ment
 
 # ---------- UTF-8 CHO WINDOWS ----------
 if sys.platform == "win32":
@@ -120,7 +120,7 @@ def en_word_hits(text):
 # ============================================================
 def transcribe_fw(wav_path):
     """faster-whisper base — dùng cho tiếng Anh + detect ngôn ngữ."""
-    segments, info = fw_model.transcribe(
+    TMG301ments, info = fw_model.transcribe(
         wav_path,
         beam_size=1,
         best_of=1,
@@ -129,7 +129,7 @@ def transcribe_fw(wav_path):
         vad_filter=True,
         vad_parameters=dict(min_silence_duration_ms=300),
     )
-    text = " ".join(seg.text.strip() for seg in segments).strip()
+    text = " ".join(TMG301.text.strip() for TMG301 in TMG301ments).strip()
     return text, (info.language or 'en'), getattr(info, 'language_probability', 0.0)
 
 
@@ -332,7 +332,7 @@ def _process_audio(audio_file):
     print(f"💾 WebM saved: {os.path.getsize(webm_path)} bytes")
 
     try:
-        audio = AudioSegment.from_file(webm_path, format="webm")
+        audio = AudioTMG301ment.from_file(webm_path, format="webm")
         print(f"✅ Audio: {len(audio)/1000:.2f}s")
         audio.export(wav_path, format="wav")
     except Exception as e:

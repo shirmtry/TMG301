@@ -1,5 +1,5 @@
 # ============================================================================
-#                    SEG — SPEECH ANALYSIS APP
+#                    TMG301 — SPEECH ANALYSIS APP
 #                    BẢN QUYỀN THUỘC VỀ HUYTKING
 # ============================================================================
 #
@@ -22,7 +22,7 @@ import re
 import time
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-from pydub import AudioSegment
+from pydub import AudioTMG301ment
 
 # ---------- UTF-8 CHO WINDOWS ----------
 if sys.platform == "win32":
@@ -122,6 +122,16 @@ EN_COMMON = {
     'love','know','think','say','tell','ask','work','play'
 }
 
+# Từ tiếng Việt KHÔNG DẤU (romanized) — dùng để detect text mode
+# Cố ý bỏ các từ dễ nhầm với tiếng Anh như: la, va, the, do, so, no, an, on
+VN_ASCII_HINTS = {
+    'khong','duoc','nguoi','nhung','cac','toi','chung','minh','gi',
+    'nao','sao','dau','bao','nhieu','vay','nhe','nha','trong','nay',
+    'khi','thi','nhu','rat','cung','dang','ve','tu','den','vao','neu',
+    'sau','truoc','tren','duoi','giua','ngoai','viet','tieng','cam','on',
+    'yeu','thich','muon','biet','hieu','lam','noi','nghe','doc','viet',
+}
+
 
 def count_vn_diacritics(text):
     return sum(1 for ch in text.lower() if ch in VN_DIACRITICS)
@@ -133,11 +143,42 @@ def en_word_hits(text):
 
 
 # ============================================================
-#  NHẬN DẠNG
+#  DETECT NGÔN NGỮ CHO TEXT (dùng cho /api/translate)
+# ============================================================
+def detect_language_text(text):
+    """
+    Detect Vietnamese vs English từ chuỗi văn bản.
+    Trả về (lang, confidence) với lang ∈ {'en', 'vi'}.
+    """
+    if not text or not text.strip():
+        return 'vi', 0.0
+
+    diac = count_vn_diacritics(text)
+    if diac >= 1:
+        # Có dấu tiếng Việt → gần như chắc chắn VI
+        return 'vi', min(0.99, 0.70 + diac * 0.03)
+
+    words = set(re.findall(r'\b[a-z]+\b', text.lower()))
+    en_hits = en_word_hits(text)
+    vn_hits = len(words & VN_ASCII_HINTS)
+
+    score_en = en_hits * 1.0
+    score_vi = vn_hits * 1.5
+
+    if score_en > score_vi:
+        return 'en', min(0.95, 0.50 + score_en * 0.05)
+    if score_vi > 0:
+        return 'vi', min(0.95, 0.50 + score_vi * 0.05)
+
+    # Không có tín hiệu → mặc định VI (UI chủ yếu VI)
+    return 'vi', 0.30
+
+
+# ============================================================
+#  NHẬN DẠNG (AUDIO)
 # ============================================================
 def transcribe_fw(wav_path):
-    """faster-whisper base — dùng cho tiếng Anh + detect ngôn ngữ."""
-    segments, info = fw_model.transcribe(
+    TMG301ments, info = fw_model.transcribe(
         wav_path,
         beam_size=1,
         best_of=1,
@@ -146,12 +187,11 @@ def transcribe_fw(wav_path):
         vad_filter=True,
         vad_parameters=dict(min_silence_duration_ms=300),
     )
-    text = " ".join(seg.text.strip() for seg in segments).strip()
+    text = " ".join(TMG301.text.strip() for TMG301 in TMG301ments).strip()
     return text, (info.language or 'en'), getattr(info, 'language_probability', 0.0)
 
 
 def transcribe_pho(wav_path):
-    """PhoWhisper base — dùng cho tiếng Việt."""
     audio, _ = librosa.load(wav_path, sr=16000)
     if len(audio) == 0:
         return ''
@@ -171,12 +211,6 @@ def transcribe_pho(wav_path):
 
 
 def transcribe_with_whisper(wav_path):
-    """
-    Chiến lược:
-      1. Chạy faster-whisper trước (nhanh, tốt cho tiếng Anh)
-      2. Nếu chắc chắn là tiếng Anh → trả về luôn
-      3. Ngược lại → chạy PhoWhisper (tốt cho tiếng Việt) → trả về
-    """
     t0 = time.time()
 
     # --- Bước 1: faster-whisper ---
@@ -210,29 +244,24 @@ def transcribe_with_whisper(wav_path):
     print(f"  ⏱️  PhoWhisper {t_pho:.2f}s | diac={pho_diac}")
     print(f"       text: {pho_text!r}")
 
-    # Nếu PhoWhisper trả về rỗng → fallback faster-whisper
     if not pho_text or len(pho_text) < 2:
         print(f"  ⚠️  PhoWhisper rỗng → fallback faster-whisper")
         return fw_lang if fw_lang in ('en', 'vi') else 'vi', fw_text
 
-    # Nếu PhoWhisper có dấu tiếng Việt → chắc chắn VI
     if pho_diac > 0:
         print(f"  ✅ → Dùng PhoWhisper (Vietnamese)")
         return 'vi', pho_text
 
-    # Trường hợp lưỡng lự: PhoWhisper không có dấu nhưng faster-whisper cũng không
-    # Nếu faster-whisper có nhiều từ tiếng Anh hơn → chọn EN
     if fw_en_hits >= 2 and fw_diac == 0:
         print(f"  ✅ → Dùng faster-whisper (English heuristic)")
         return 'en', fw_text
 
-    # Mặc định: tiếng Việt (vì UI chủ yếu dùng VI)
     print(f"  ✅ → Dùng PhoWhisper (default VI)")
     return 'vi', pho_text
 
 
 # ============================================================
-#  DỊCH
+#  DỊCH (TEXT)
 # ============================================================
 def translate_text(text, source_lang):
     if not text or not text.strip():
@@ -339,6 +368,7 @@ def index():
     return render_template('index.html')
 
 
+# ------- HELPER: xử lý audio (dùng chung cho /api/transcribe và /analyze) -------
 def _process_audio(audio_file):
     debug_dir = "debug"
     os.makedirs(debug_dir, exist_ok=True)
@@ -349,7 +379,7 @@ def _process_audio(audio_file):
     print(f"💾 WebM saved: {os.path.getsize(webm_path)} bytes")
 
     try:
-        audio = AudioSegment.from_file(webm_path, format="webm")
+        audio = AudioTMG301ment.from_file(webm_path, format="webm")
         print(f"✅ Audio: {len(audio)/1000:.2f}s")
         audio.export(wav_path, format="wav")
     except Exception as e:
@@ -403,5 +433,92 @@ def analyze_audio():
     return jsonify(result), status
 
 
+# ============================================================
+#  API MỚI — TEXT TRANSLATION (gõ chữ → dịch)
+# ============================================================
+@app.route('/api/translate', methods=['POST'])
+def api_translate():
+    """
+    Body JSON:
+      { "text": "Hello world", "source": "auto" | "en" | "vi" }
+    Response JSON:
+      {
+        "sourceLang": "en", "sourceLangLabel": "English",
+        "targetLang": "vi", "targetLangLabel": "Tiếng Việt",
+        "original": "Hello world",
+        "translation": "Xin chào thế giới",
+        "detected": true, "confidence": 0.85
+      }
+    """
+    data = request.get_json(silent=True) or {}
+    text = (data.get('text') or '').strip()
+    source = (data.get('source') or 'auto').lower()
+
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+    if len(text) > 5000:
+        return jsonify({'error': 'Text too long (max 5000 chars)'}), 400
+
+    detected = False
+    confidence = 1.0
+    if source not in ('en', 'vi'):
+        source, confidence = detect_language_text(text)
+        detected = True
+
+    target = 'vi' if source == 'en' else 'en'
+    translation = translate_text(text, source)
+
+    print(f"🔁 [translate] {source}→{target} | {text[:60]!r} → {translation[:60]!r}")
+
+    return jsonify({
+        'original': text,
+        'translation': translation,
+        'sourceLang': source,
+        'sourceLangLabel': LANG_LABEL.get(source, source),
+        'targetLang': target,
+        'targetLangLabel': LANG_LABEL.get(target, target),
+        'detected': detected,
+        'confidence': round(confidence, 2),
+    }), 200
+
+
+# ============================================================
+#  API MỚI — TEXT ANALYSIS (phân tích bài nói từ văn bản)
+# ============================================================
+@app.route('/api/analyze-text', methods=['POST'])
+def api_analyze_text():
+    """
+    Body JSON:
+      { "text": "...", "source": "auto"|"en"|"vi", "duration": 12.5 }
+    duration (giây) là tùy chọn — nếu bỏ qua, ước lượng theo 150 WPM.
+    """
+    data = request.get_json(silent=True) or {}
+    text = (data.get('text') or '').strip()
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+    if len(text) > 5000:
+        return jsonify({'error': 'Text too long (max 5000 chars)'}), 400
+
+    source = (data.get('source') or 'auto').lower()
+    if source not in ('en', 'vi'):
+        source, _ = detect_language_text(text)
+
+    try:
+        duration = float(data.get('duration') or 0)
+    except (TypeError, ValueError):
+        duration = 0.0
+    if duration <= 0:
+        wc = len(re.findall(r'\b\w+\b', text))
+        duration = max(1.0, wc / 150.0 * 60.0)
+
+    result = analyze_transcript(text, duration, lang=source)
+    result['langLabel'] = LANG_LABEL.get(source, source)
+    return jsonify(result), 200
+
+
 if __name__ == '__main__':
+    print("🚀 TMG301 ready — http://localhost:5000")
+    print("   • POST /api/transcribe  (audio → text + dịch)")
+    print("   • POST /api/translate   (text  → dịch)        ⬅️ MỚI")
+    print("   • POST /api/analyze-text (text → metrics)     ⬅️ MỚI")
     app.run(debug=False, host='0.0.0.0', port=5000)

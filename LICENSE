@@ -1,84 +1,168 @@
 ================================================================================
-                          HUYTKING PROPRIETARY LICENSE
-                          BẢN QUYỀN THUỘC VỀ HUYTKING
+                        PROPRIETARY SOFTWARE LICENSE
 ================================================================================
 
-Copyright (c) 2026 HUYTKING
+TMG301 — Speech & Text Translation App
+Copyright (c) 2026 HUYTKING TECH DRONE · SHIRMTRY
 All Rights Reserved.
-Zalo: 0396241674
-GitHub: https://github.com/shirmtry
-
---------------------------------------------------------------------------------
-1. QUYỀN SỞ HỮU
---------------------------------------------------------------------------------
-
-Dự án "SEG — Speech Analysis App" (sau đây gọi là "Phần Mềm") là tài sản
-trí tuệ độc quyền của HUYTKING.
-
-Mọi mã nguồn, tài liệu, thiết kế, giao diện, thuật toán, và nội dung đi kèm
-đều thuộc quyền sở hữu của HUYTKING.
-
---------------------------------------------------------------------------------
-2. CÁC HÀNH VI ĐƯỢC PHÉP
---------------------------------------------------------------------------------
-
-✅ Được phép:
-   - Xem, đọc, nghiên cứu mã nguồn cho mục đích HỌC TẬP CÁ NHÂN
-   - Sử dụng cho ĐỒ ÁN MÔN HỌC với điều kiện GHI RÕ NGUỒN:
-         "Nguồn: HUYTKING — https://github.com/shirmtry/seg"
-   - Fork để đóng góp cải tiến (phải gửi Pull Request về repo gốc)
-
---------------------------------------------------------------------------------
-3. CÁC HÀNH VI BỊ NGHIÊM CẤM
---------------------------------------------------------------------------------
-
-❌ NGHIÊM CẤM:
-   - Sao chép, chỉnh sửa, phân phối mà KHÔNG ghi rõ nguồn
-   - Sử dụng cho mục đích THƯƠNG MẠI mà không có sự đồng ý bằng văn bản
-   - Bán lại, cho thuê, hoặc cấp phép lại Phần Mềm
-   - Xoá hoặc thay đổi thông tin bản quyền (HUYTKING, Zalo 0767 936 239)
-   - Đăng ký bản quyền dưới tên khác
-   - Sử dụng Phần Mềm để vi phạm pháp luật
-
---------------------------------------------------------------------------------
-4. XỬ LÝ VI PHẠM
---------------------------------------------------------------------------------
-
-Mọi hành vi vi phạm sẽ bị xử lý theo:
-   - Luật Sở hữu trí tuệ Việt Nam
-   - Luật Công nghệ thông tin Việt Nam
-   - Các điều ước quốc tế có liên quan
-
-Bên vi phạm phải chịu trách nhiệm bồi thường thiệt hại và các chi phí
-pháp lý phát sinh.
-
---------------------------------------------------------------------------------
-5. LIÊN HỆ CẤP PHÉP
---------------------------------------------------------------------------------
-
-Để xin phép sử dụng Phần Mềm cho mục đích thương mại, vui lòng liên hệ:
-
-    📞 Zalo: 0396241674
-    👤 Tác giả: HUYTKING
-    🌐 GitHub: https://github.com/shirmtry
-
---------------------------------------------------------------------------------
-6. MIỄN TRỪ TRÁCH NHIỆM
---------------------------------------------------------------------------------
-
-Phần Mềm được cung cấp "NGUYÊN TRẠNG" (AS IS), không kèm bảo hành dưới
-bất kỳ hình thức nào. Tác giả không chịu trách nhiệm cho bất kỳ thiệt hại
-nào phát sinh từ việc sử dụng Phần Mềm.
-
---------------------------------------------------------------------------------
-7. HIỆU LỰC
---------------------------------------------------------------------------------
-
-Giấy phép này có hiệu lực từ ngày 01/01/2026 và được áp dụng cho mọi
-phiên bản của Phần Mềm.
 
 ================================================================================
-                    © 2025 HUYTKING — ALL RIGHTS RESERVED
-                         Zalo: 0396241674
-                    GitHub: https://github.com/shirmtry
+1. THÔNG TIN TÁC GIẢ
+================================================================================
+
+  Tác giả       :  HUYTKING
+  Tổ chức       :  HUYTKING TECH DRONE · SHIRMTRY
+  Zalo          :  0396 241 674
+  GitHub        :  https://github.com/shirmtry
+  Quốc gia      :  Việt Nam
+
+================================================================================
+2. PHẠM VI ÁP DỤNG
+================================================================================
+
+  Giấy phép này áp dụng cho toàn bộ:
+
+    • Mã nguồn (source code)
+    • Tài liệu (documentation, README, DEMO, CHANGELOG)
+    • Hình ảnh, giao diện, thiết kế
+    • Models đã huấn luyện (nếu có)
+    • Mọi tài sản trí tuệ đi kèm dự án
+
+  được cung cấp dưới tên gói:
+
+    "TMG301 — Speech & Text Translation App"
+
+================================================================================
+3. QUYỀN ĐƯỢC CẤP
+================================================================================
+
+  Tác giả cấp cho người dùng quyền HẠN CHẾ, KHÔNG ĐỘC QUYỀN, KHÔNG CHUYỂN
+  NHƯỢNG, CÓ THỂ THU HỒI để:
+
+    ✓ Xem, đọc mã nguồn
+    ✓ Chạy thử nghiệm cho mục đích HỌC TẬP CÁ NHÂN
+    ✓ Nghiên cứu, tham khảo ý tưởng kiến trúc
+    ✓ Fork trên GitHub cho mục đích cá nhân (không publish)
+
+================================================================================
+4. HÀNH VI BỊ NGHIÊM CẤM
+================================================================================
+
+  NGHIÊM CẤM mọi hành vi sau đây mà KHÔNG CÓ SỰ ĐỒNG Ý BẰNG VĂN BẢN của
+  tác giả:
+
+    ✗ Sao chép toàn bộ hoặc một phần mã nguồn
+    ✗ Chỉnh sửa, biên dịch lại, tái phân phối
+    ✗ Đăng tải lên bất kỳ nền tảng nào (GitHub, GitLab, kaggle...)
+    ✗ Sử dụng cho mục đích thương mại (bán, cho thuê, SaaS)
+    ✗ Tích hợp vào sản phẩm khác (thương mại hoặc phi thương mại)
+    ✗ Đổi tên, xoá bản quyền, hoặc thay đổi thông tin tác giả
+    ✗ Dùng để huấn luyện AI khác (AI training, distillation)
+    ✗ Bán lại dưới mọi hình thức
+    ✗ Cấp phép lại (sublicense) cho bên thứ ba
+
+================================================================================
+5. YÊU CẦU KHI ĐƯỢC CẤP PHÉP
+================================================================================
+
+  Nếu được tác giả cấp phép sử dụng, người dùng PHẢI:
+
+    ✓ Giữ nguyên header bản quyền trong tất cả các file
+    ✓ Ghi rõ nguồn gốc: "Dựa trên TMG301 bởi HUYTKING TECH DRONE · SHIRMTRY"
+    ✓ Không sử dụng cho mục đích gây hại, lừa đảo, vi phạm pháp luật
+    ✓ Tuân thủ pháp luật Việt Nam và luật bản quyền quốc tế
+
+================================================================================
+6. MIỄN TRỪ TRÁCH NHIỆM
+================================================================================
+
+  PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN TRẠNG" (AS IS), KHÔNG CÓ BẤT KỲ
+  BẢO ĐẢM NÀO, DÙ RÕ RÀNG HAY NGỤ Ý, BAO GỒM NHƯNG KHÔNG GIỚI HẠN Ở:
+
+    • Bảo đảm về khả năng thương mại
+    • Bảo đảm về sự phù hợp cho một mục đích cụ thể
+    • Bảo đảm không vi phạm quyền của bên thứ ba
+
+  TRONG MỌI TRƯỜNG HỢP, TÁC GIẢ KHÔNG CHỊU TRÁCH NHIỆM VỀ:
+
+    • Bất kỳ thiệt hại trực tiếp, gián tiếp, ngẫu nhiên, đặc biệt
+    • Mất dữ liệu, mất lợi nhuận, gián đoạn kinh doanh
+    • Hậu quả pháp lý từ việc sử dụng phần mềm
+    • Sai sót trong kết quả dịch thuật hoặc nhận dạng giọng nói
+
+  NGƯỜI DÙNG TỰ CHỊU TRÁCH NHIỆM HOÀN TOÀN KHI SỬ DỤNG PHẦN MỀM.
+
+================================================================================
+7. MODEL BÊN THỨ BA
+================================================================================
+
+  Dự án này sử dụng các pretrained models từ bên thứ ba, tuân theo giấy
+  phép riêng của họ:
+
+    • faster-whisper (Systran)       → MIT License
+    • Whisper (OpenAI)               → MIT License
+    • PhoWhisper (VinAI)             → Apache 2.0
+    • MarianMT (Helsinki-NLP)        → CC-BY 4.0
+    • Transformers (HuggingFace)     → Apache 2.0
+    • Flask                          → BSD-3-Clause
+    • FFmpeg                         → LGPL 2.1+
+
+  Giấy phép của dự án này KHÔNG áp dụng cho các model bên thứ ba ở trên.
+  Người dùng phải tuân thủ giấy phép gốc của từng model khi sử dụng.
+
+================================================================================
+8. THỜI HẠN VÀ CHẤM DỨT
+================================================================================
+
+  Giấy phép này có hiệu lực cho đến khi bị chấm dứt. Giấy phép sẽ tự động
+  chấm dứt NGAY LẬP TỨC nếu người dùng vi phạm bất kỳ điều khoản nào.
+
+  Khi giấy phép chấm dứt, người dùng PHẢI:
+
+    • Ngừng sử dụng phần mềm ngay lập tức
+    • Xoá toàn bộ bản sao trong vòng 07 ngày
+    • Xoá các sản phẩm phái sinh (derivative works)
+
+================================================================================
+9. LUẬT ÁP DỤNG
+================================================================================
+
+  Giấy phép này được điều chỉnh và giải thích theo pháp luật nước
+  Cộng hoà Xã hội Chủ nghĩa Việt Nam.
+
+  Mọi tranh chấp phát sinh sẽ được giải quyết thông qua thương lượng.
+  Nếu không thành, sẽ đưa ra Toà án Nhân dân có thẩm quyền tại Việt Nam.
+
+================================================================================
+10. LIÊN HỆ CẤP PHÉP
+================================================================================
+
+  Để xin cấp phép sử dụng cho mục đích thương mại hoặc các mục đích khác
+  ngoài phạm vi được phép ở Mục 3, vui lòng liên hệ:
+
+    📞 Zalo     :  0396 241 674
+    🐙 GitHub   :  https://github.com/shirmtry
+
+  Tác giả có quyền từ chối cấp phép mà không cần giải thích lý do.
+
+================================================================================
+11. TUYÊN BỐ CUỐI CÙNG
+================================================================================
+
+  Bằng việc tải xuống, cài đặt, sao chép hoặc sử dụng phần mềm này, bạn
+  XÁC NHẬN rằng:
+
+    ✓ Đã đọc và hiểu rõ toàn bộ nội dung giấy phép này
+    ✓ Đồng ý tuân thủ mọi điều khoản được nêu
+    ✓ Chấp nhận hậu quả pháp lý nếu vi phạm
+
+  Nếu bạn KHÔNG ĐỒNG Ý với bất kỳ điều khoản nào, vui lòng XOÁ phần mềm
+  ngay lập tức và không sử dụng.
+
+================================================================================
+                            © 2026 HUYTKING
+                    HUYTKING TECH DRONE · SHIRMTRY
+                          All Rights Reserved
+
+                "Code với tâm huyết · Bản quyền với trách nhiệm"
 ================================================================================
