@@ -20,7 +20,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
-    font-family:'Inter',system-ui,-apple-system,'TMG301oe UI',Roboto,sans-serif;
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     background:
       radial-gradient(1200px 600px at 10% -10%, var(--bg-1), transparent 60%),
       radial-gradient(1000px 500px at 90% 0%, var(--bg-2), transparent 55%),
@@ -57,7 +57,7 @@
     display:flex;gap:6px;justify-content:center;
     background:#fff;border:1px solid var(--border);
     padding:6px;border-radius:14px;
-    margin:0 auto 28px;max-width:420px;
+    margin:0 auto 18px;max-width:420px;
     box-shadow:var(--shadow-sm);
   }
   .tab-btn{
@@ -75,6 +75,17 @@
   .tab-panel{display:none}
   .tab-panel.active{display:block;animation:fadeIn .25s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  /* TARGET LANG BAR (shared) */
+  .lang-bar{
+    display:flex;align-items:center;gap:10px;justify-content:center;
+    margin:0 auto 24px;max-width:420px;
+  }
+  .lang-bar-label{
+    font-size:12px;font-weight:600;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
+  }
+  .lang-bar .select-wrap{flex:1}
 
   /* MIC */
   .mic-section{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:32px}
@@ -377,6 +388,7 @@
     .card p{font-size:17px}
     .metrics-grid{grid-template-columns:repeat(2,1fr)}
     .tabs{max-width:100%}
+    .lang-bar{max-width:100%}
   }
 </style>
 </head>
@@ -387,13 +399,29 @@
   <div class="header">
     <div class="logo">🎙️</div>
     <h1>TMG301 — Voice & Text Translate</h1>
-    <p class="sub">Nói hoặc gõ tiếng Anh ↔ tiếng Việt · Dịch tự động · Phân tích bài nói</p>
+    <p class="sub">Nói hoặc gõ · Dịch đa ngôn ngữ · Phân tích bài nói</p>
   </div>
 
   <!-- TABS -->
   <div class="tabs" role="tablist">
     <button class="tab-btn active" data-tab="voice" role="tab">🎙️ Giọng nói</button>
     <button class="tab-btn" data-tab="text" role="tab">⌨️ Văn bản</button>
+  </div>
+
+  <!-- SHARED TARGET LANGUAGE BAR (áp dụng cho cả 2 tab) -->
+  <div class="lang-bar">
+    <span class="lang-bar-label">Dịch sang:</span>
+    <div class="select-wrap">
+      <select id="targetLangSelect">
+        <option value="vi" selected>🇻🇳 Tiếng Việt</option>
+        <option value="en">🇺🇸 English</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="zh">🇨🇳 中文</option>
+        <option value="es">🇪🇸 Español</option>
+      </select>
+    </div>
   </div>
 
   <!-- ============================================================= -->
@@ -468,8 +496,13 @@
       <div class="select-wrap">
         <select id="srcLangSelect">
           <option value="auto" selected>🌐 Tự động phát hiện</option>
-          <option value="en">🇺🇸 English → Tiếng Việt</option>
-          <option value="vi">🇻🇳 Tiếng Việt → English</option>
+          <option value="vi">🇻🇳 Tiếng Việt</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="ja">🇯🇵 日本語</option>
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="zh">🇨🇳 中文</option>
+          <option value="es">🇪🇸 Español</option>
         </select>
       </div>
       <button class="btn-swap" id="swapBtn" title="Hoán đổi chiều dịch">⇄</button>
@@ -541,8 +574,24 @@
 /* ============================================================ */
 const API_VOICE = '/api/transcribe';
 const API_TEXT  = '/api/translate';
-const LANG_LABEL = { vi: 'Tiếng Việt 🇻🇳', en: 'English 🇺🇸' };
 const MAX_TEXT = 5000;
+
+// PHẢI khớp với SUPPORTED_LANGS trong app.py
+const SUPPORTED_LANGS = ['vi', 'en', 'fr', 'ja', 'ko', 'zh', 'es'];
+
+const LANG_LABEL = {
+  vi: 'Tiếng Việt 🇻🇳', en: 'English 🇺🇸',
+  fr: 'Français 🇫🇷', ja: '日本語 🇯🇵',
+  ko: '한국어 🇰🇷', zh: '中文 🇨🇳', es: 'Español 🇪🇸',
+};
+const LANG_FLAG = {
+  vi: '🇻🇳', en: '🇺🇸', fr: '🇫🇷',
+  ja: '🇯🇵', ko: '🇰🇷', zh: '🇨🇳', es: '🇪🇸',
+};
+const TTS_LOCALE = {
+  vi: 'vi-VN', en: 'en-US', fr: 'fr-FR',
+  ja: 'ja-JP', ko: 'ko-KR', zh: 'zh-CN', es: 'es-ES',
+};
 
 const $ = (id) => document.getElementById(id);
 
@@ -571,7 +620,7 @@ function speak(text, lang) {
   if (!text || !window.speechSynthesis) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang === 'vi' ? 'vi-VN' : 'en-US';
+  u.lang = TTS_LOCALE[lang] || 'en-US';
   u.rate = 1;
   speechSynthesis.speak(u);
 }
@@ -606,10 +655,39 @@ function addHistory(data) {
     $('inputText').value = data.text || data.original || '';
     $('inputText').dispatchEvent(new Event('input'));
     $('inputText').focus();
+    // Đồng bộ select theo entry lịch sử
+    if (SUPPORTED_LANGS.includes(data.lang)) srcLangSelect.value = data.lang;
+    if (SUPPORTED_LANGS.includes(data.targetLang)) {
+      $('targetLangSelect').value = data.targetLang;
+    }
+    syncTargetOptions();
   });
   $('history').prepend(el);
   while ($('history').children.length > 15) $('history').lastChild.remove();
 }
+
+/* ============================================================ */
+/*  TARGET OPTIONS SYNC                                          */
+/*  - Ẩn ngôn ngữ trùng source khỏi dropdown target              */
+/*  - Nếu target hiện tại bị trùng → tự đổi sang option hợp lệ   */
+/* ============================================================ */
+const targetLangSelect = $('targetLangSelect');
+const srcLangSelect = $('srcLangSelect');
+
+function syncTargetOptions() {
+  const src = srcLangSelect.value;
+  [...targetLangSelect.options].forEach(opt => {
+    const conflict = (opt.value === src);
+    opt.disabled = conflict;
+    opt.hidden = conflict;
+  });
+  if (src !== 'auto' && targetLangSelect.value === src) {
+    const firstValid = [...targetLangSelect.options].find(o => !o.disabled && !o.hidden);
+    if (firstValid) targetLangSelect.value = firstValid.value;
+  }
+}
+
+srcLangSelect.addEventListener('change', syncTargetOptions);
 
 /* ============================================================ */
 /*  VOICE TAB                                                    */
@@ -717,6 +795,8 @@ async function handleStop() {
   try {
     const fd = new FormData();
     fd.append('audio', blob, 'audio.webm');
+    // Gửi target cho backend
+    fd.append('target', targetLangSelect.value);
 
     const res = await fetch(API_VOICE, { method: 'POST', body: fd });
     const data = await res.json();
@@ -815,7 +895,6 @@ const charCount = $('charCount');
 const translateBtn = $('translateBtn');
 const clearBtn = $('clearBtn');
 const swapBtn = $('swapBtn');
-const srcLangSelect = $('srcLangSelect');
 
 const textSrcOut = $('textSrcOut'), textTransOut = $('textTransOut');
 const textSrcCard = $('textSrcCard'), textTransCard = $('textTransCard');
@@ -849,7 +928,13 @@ async function doTranslate() {
     return;
   }
 
-  const source = srcLangSelect.value; // 'auto' | 'en' | 'vi'
+  const source = srcLangSelect.value;   // 'auto' | lang code
+  const target = targetLangSelect.value;
+  if (source !== 'auto' && source === target) {
+    alert('Ngôn ngữ nguồn và đích trùng nhau. Chọn lại nhé.');
+    return;
+  }
+
   translateBtn.disabled = true;
   translateBtn.innerHTML = '<span>⏳</span><span>Đang dịch…</span>';
 
@@ -857,7 +942,7 @@ async function doTranslate() {
     const res = await fetch(API_TEXT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, source }),
+      body: JSON.stringify({ text, source, target }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || res.statusText);
@@ -927,21 +1012,48 @@ clearBtn.addEventListener('click', () => {
   lastTextResult = null;
 });
 
+/* ============================================================ */
+/*  SWAP — logic multi-lang                                      */
+/* ============================================================ */
 swapBtn.addEventListener('click', () => {
-  // Nếu đã có kết quả → đảo text + chiều dịch
+  const curSrc = srcLangSelect.value;
+  const curTgt = targetLangSelect.value;
+
+  // Đã có kết quả → đảo text + đảo chiều, dịch lại
   if (lastTextResult) {
+    const prevSrc = lastTextResult.sourceLang;
+    const prevTgt = lastTextResult.targetLang;
+
     inputText.value = lastTextResult.translation;
     inputText.dispatchEvent(new Event('input'));
-    // Đảo chiều select
-    if (lastTextResult.sourceLang === 'en') srcLangSelect.value = 'vi';
-    else srcLangSelect.value = 'en';
+
+    // src mới = tgt cũ, tgt mới = src cũ
+    srcLangSelect.value = prevTgt;
+    targetLangSelect.value = prevSrc;
+    syncTargetOptions();
+    // syncTargetOptions có thể đổi target nếu trùng — nhưng prevTgt != prevSrc nên OK
+    targetLangSelect.value = prevSrc;
+
     doTranslate();
     return;
   }
-  // Nếu chưa có → chỉ đảo lựa chọn select
-  if (srcLangSelect.value === 'en') srcLangSelect.value = 'vi';
-  else if (srcLangSelect.value === 'vi') srcLangSelect.value = 'en';
+
+  // Chưa có kết quả → đảo lựa chọn
+  if (curSrc === 'auto') {
+    // auto → chuyển thành specific = target hiện tại
+    srcLangSelect.value = curTgt;
+    targetLangSelect.value = (curTgt === 'vi') ? 'en' : 'vi';
+  } else {
+    srcLangSelect.value = curTgt;
+    targetLangSelect.value = curSrc;
+  }
+  syncTargetOptions();
 });
+
+/* ============================================================ */
+/*  INIT                                                         */
+/* ============================================================ */
+syncTargetOptions();
 </script>
 </body>
 </html>
